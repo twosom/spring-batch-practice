@@ -1,19 +1,16 @@
 package lab.gravy.springbatch.part4;
 
+import lab.gravy.springbatch.part5.Orders;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.*;
 
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -32,20 +29,28 @@ public class User {
     @Enumerated(STRING)
     private Level level = Level.NORMAL;
 
-    private int totalAmount;
 
+    @OneToMany(cascade = PERSIST)
+    @JoinColumn(name = "user_id")
+    private List<Orders> orders = new ArrayList<>();
 
     private LocalDate updateDate;
 
 
     @Builder
-    private User(String username, int totalAmount) {
+    private User(String username, List<Orders> orders) {
         this.username = username;
-        this.totalAmount = totalAmount;
+        this.orders = orders;
     }
 
     public boolean availableLevelUp() {
         return Level.availableLevelUp(this.getLevel(), this.getTotalAmount());
+    }
+
+    public int getTotalAmount() {
+        return this.orders.stream()
+                .mapToInt(Orders::getAmount)
+                .sum();
     }
 
     public Level levelUp() {
