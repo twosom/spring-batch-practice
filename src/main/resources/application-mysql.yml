@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/spring_batch?rewriteBatchedStatements=true
+    username: root
+  batch:
+    jdbc:
+      initialize-schema: never
+  jpa:
+    hibernate:
+      ddl-auto: update
+  sql:
+    init:
+      data-locations: classpath:person.sql
